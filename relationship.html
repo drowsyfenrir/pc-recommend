@@ -1,0 +1,267 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>pc 부품 선택안</title>
+  <meta name="description" content="PC 부품과 분류의 관계를 정리하는 관계도입니다." />
+  <meta property="og:title" content="pc 부품 선택안" />
+  <meta property="og:description" content="PC 부품과 분류의 관계를 한눈에 살펴볼 수 있는 관계도입니다." />
+  <meta property="og:image" content="https://reverselibrary.pages.dev/img/thumbnail.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content="https://reverselibrary.pages.dev/relationship.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="pc 부품 선택안" />
+  <meta name="twitter:description" content="PC 부품과 분류의 관계를 한눈에 살펴볼 수 있는 관계도입니다." />
+  <meta name="twitter:image" content="https://reverselibrary.pages.dev/img/thumbnail.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="img/icon/32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="img/icon/16.png" />
+  <link rel="apple-touch-icon" href="img/icon/fabicon.png" />
+  <link rel="stylesheet" href="styles.css?v=20260611-copy-quote" />
+</head>
+<body>
+  <main class="app-shell">
+    <section id="graph" class="graph-canvas" aria-label="부품 관계도"></section>
+  </main>
+  <div class="quote-copy-stack" aria-label="견적 링크 복사">
+    <button id="copyDanawaQuote" class="quote-copy-capsule" type="button">👉 다나와 견적 복사하기</button>
+    <button id="copyDanawaBudgetQuote" class="quote-copy-capsule" type="button">👉 다나와 염가형 견적 복사하기</button>
+  </div>
+  <div id="copyToast" class="copy-toast" role="status" aria-live="polite" hidden>복사 완료</div>
+  <div class="transform-status" aria-live="polite">
+    <div class="nav-menu">
+      <button id="groupJumpButton" class="nav-menu-button" type="button" aria-haspopup="true" aria-expanded="false">그룹 이동</button>
+      <div id="groupJumpOptions" class="nav-menu-options" hidden></div>
+    </div>
+    <div class="zoom-menu">
+      <button id="zoomStatus" class="zoom-status-button" type="button" aria-haspopup="true" aria-expanded="false">🔎 100%</button>
+      <div id="zoomOptions" class="zoom-options" hidden>
+        <button type="button" data-zoom="0.5">50%</button>
+        <button type="button" data-zoom="0.7">70%</button>
+        <button type="button" data-zoom="1">100%</button>
+        <button type="button" data-zoom="1.5">150%</button>
+        <button type="button" data-zoom="2">200%</button>
+      </div>
+    </div>
+  </div>
+  <script src="vendor/panzoom.min.js"></script>
+  <script src="graph.js?v=20260611-avatar-150"></script>
+  <script>
+    window.RelationshipGraph.bootViewer({ dataUrl: 'data.json' }).then(({ data, graph }) => {
+      const panzoomFactory = window.panzoom || window.pz;
+      const initialZoom = 1;
+      const targetLabel = data.labels.find(label => label.name === '송출 PC의 역할');
+      const targetGroup = data.groups.find(group => group.name === '타임키퍼 소대');
+      const shell = document.querySelector('.app-shell');
+      const graphItem = (type, id) => graph.querySelector(`[data-type="${type}"][data-id="${String(id).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"]`);
+      const initialTargetElement = targetLabel
+        ? graphItem('label', targetLabel.id)
+        : null;
+      const targetElement = targetGroup
+        ? graphItem('group', targetGroup.id)
+        : null;
+      const groupJumpButton = document.getElementById('groupJumpButton');
+      const groupJumpOptions = document.getElementById('groupJumpOptions');
+      const zoomStatus = document.getElementById('zoomStatus');
+      const zoomOptions = document.getElementById('zoomOptions');
+      const copyDanawaQuote = document.getElementById('copyDanawaQuote');
+      const copyDanawaBudgetQuote = document.getElementById('copyDanawaBudgetQuote');
+      const copyToast = document.getElementById('copyToast');
+      const danawaQuoteUrl = 'https://shop.danawa.com/short/Vlt7FB';
+      const danawaBudgetQuoteUrl = 'https://shop.danawa.com/short/Zlt7FB';
+      const topGroups = data.groups.filter(group => !group.parentGroupId);
+      topGroups.forEach(group => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.groupId = group.id;
+        button.textContent = group.name;
+        groupJumpOptions.append(button);
+      });
+      groupJumpButton.textContent = targetGroup?.name || topGroups[0]?.name || '그룹 이동';
+      let panzoomInstance;
+      let initialTransform;
+
+      function isGraphBackground(target) {
+        return target === graph || target.classList.contains('graph-svg');
+      }
+
+      function isSelectableContent(target) {
+        return Boolean(target.closest('.person-card, .map-label, .relation-label, .group-title, .group-description'));
+      }
+
+      function initialDeltaFor(element) {
+        const viewport = shell.getBoundingClientRect();
+        const targetRect = element.getBoundingClientRect();
+        const topOffset = Math.min(120, Math.max(72, viewport.height * 0.12));
+        return {
+          x: viewport.left + viewport.width / 2 - (targetRect.left + targetRect.width / 2),
+          y: viewport.top + topOffset - targetRect.top
+        };
+      }
+
+      function applyInitialTransformFallback(element) {
+        const delta = initialDeltaFor(element);
+        graph.dataset.initialFocus = '송출 PC의 역할';
+        graph.style.transformOrigin = '0 0 0';
+        graph.style.transform = `matrix(${initialZoom}, 0, 0, ${initialZoom}, ${delta.x}, ${delta.y})`;
+        requestAnimationFrame(() => {
+          const correction = initialDeltaFor(element);
+          if (Math.abs(correction.x) > 1 || Math.abs(correction.y) > 1) {
+            graph.style.transform = `matrix(${initialZoom}, 0, 0, ${initialZoom}, ${delta.x + correction.x}, ${delta.y + correction.y})`;
+          }
+        });
+      }
+
+      function centerOnTarget() {
+        panzoomInstance.zoomAbs(0, 0, initialZoom);
+        panzoomInstance.moveTo(0, 0);
+        focusInitialElement(initialTargetElement || targetElement || graph);
+      }
+
+      function centerElement(element) {
+        const viewport = shell.getBoundingClientRect();
+        const title = element.classList.contains('group-box') ? element.querySelector('.group-title') : null;
+        const targetRect = (title || element).getBoundingClientRect();
+        const dx = viewport.left + viewport.width / 2 - (targetRect.left + targetRect.width / 2);
+        const dy = viewport.top + viewport.height / 2 - (targetRect.top + targetRect.height / 2);
+        panzoomInstance.moveBy(dx, dy);
+      }
+
+      function focusInitialElement(element) {
+        const delta = initialDeltaFor(element);
+        panzoomInstance.moveBy(delta.x, delta.y);
+      }
+
+      if (!panzoomFactory) {
+        applyInitialTransformFallback(initialTargetElement || targetElement || graph);
+        return;
+      }
+
+      function resetView() {
+        if (!initialTransform) {
+          centerOnTarget();
+          updateTransformStatus();
+          return;
+        }
+        panzoomInstance.zoomAbs(0, 0, initialTransform.scale);
+        panzoomInstance.moveTo(initialTransform.x, initialTransform.y);
+        updateTransformStatus();
+      }
+
+      function updateTransformStatus() {
+        const transform = panzoomInstance.getTransform();
+        const scale = Math.round(transform.scale * 100);
+        zoomStatus.textContent = `🔎 ${scale}%`;
+      }
+
+      function setZoomMenu(open) {
+        zoomOptions.hidden = !open;
+        zoomStatus.setAttribute('aria-expanded', String(open));
+      }
+
+      function setGroupMenu(open) {
+        groupJumpOptions.hidden = !open;
+        groupJumpButton.setAttribute('aria-expanded', String(open));
+      }
+
+      function zoomTo(scale) {
+        const viewport = shell.getBoundingClientRect();
+        panzoomInstance.zoomAbs(viewport.left + viewport.width / 2, viewport.top + viewport.height / 2, scale);
+        updateTransformStatus();
+      }
+
+      async function copyText(text) {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(text);
+          return;
+        }
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.append(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        textarea.remove();
+      }
+
+      function showCopyToast() {
+        copyToast.hidden = false;
+        copyToast.classList.add('is-visible');
+        clearTimeout(showCopyToast.timer);
+        showCopyToast.timer = setTimeout(() => {
+          copyToast.classList.remove('is-visible');
+          copyToast.hidden = true;
+        }, 1400);
+      }
+
+      panzoomInstance = panzoomFactory(graph, {
+        maxZoom: 2,
+        minZoom: 0.5,
+        initialZoom,
+        zoomSpeed: 0.05,
+        smoothScroll: true,
+        bounds: false,
+        zoomDoubleClickSpeed: 1,
+        enableTextSelection: true,
+        beforeMouseDown(event) {
+          return !isGraphBackground(event.target) || isSelectableContent(event.target);
+        },
+        onDoubleClick(event) {
+          if (isGraphBackground(event.target)) {
+            resetView();
+          }
+          return false;
+        }
+      });
+      centerOnTarget();
+      initialTransform = { ...panzoomInstance.getTransform() };
+      updateTransformStatus();
+      panzoomInstance.on('transform', updateTransformStatus);
+      groupJumpButton.addEventListener('click', event => {
+        event.stopPropagation();
+        setGroupMenu(groupJumpOptions.hidden);
+        setZoomMenu(false);
+      });
+      groupJumpOptions.addEventListener('click', event => {
+        const button = event.target.closest('[data-group-id]');
+        if (!button) return;
+        const group = data.groups.find(item => item.id === button.dataset.groupId);
+        const groupElement = group ? graphItem('group', group.id) : null;
+        if (groupElement) {
+          groupJumpButton.textContent = group.name;
+          centerElement(groupElement);
+        }
+        setGroupMenu(false);
+      });
+      zoomStatus.addEventListener('click', event => {
+        event.stopPropagation();
+        setZoomMenu(zoomOptions.hidden);
+        setGroupMenu(false);
+      });
+      zoomOptions.addEventListener('click', event => {
+        const button = event.target.closest('[data-zoom]');
+        if (!button) return;
+        zoomTo(Number(button.dataset.zoom));
+        setZoomMenu(false);
+      });
+      copyDanawaQuote.addEventListener('click', async () => {
+        await copyText(danawaQuoteUrl);
+        showCopyToast();
+      });
+      copyDanawaBudgetQuote.addEventListener('click', async () => {
+        await copyText(danawaBudgetQuoteUrl);
+        showCopyToast();
+      });
+      document.addEventListener('click', event => {
+        if (!event.target.closest('.nav-menu')) setGroupMenu(false);
+        if (!event.target.closest('.zoom-menu')) setZoomMenu(false);
+      });
+    });
+  </script>
+</body>
+</html>
