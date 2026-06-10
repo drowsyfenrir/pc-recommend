@@ -2272,7 +2272,9 @@ button { border: 0; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: grab;
 }
+.app-shell:active { cursor: grabbing; }
 .toolbar {
   display: flex;
   flex-wrap: wrap;

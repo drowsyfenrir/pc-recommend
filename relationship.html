@@ -85,7 +85,7 @@
       let initialTransform;
 
       function isGraphBackground(target) {
-        return target === graph || target.classList.contains('graph-svg');
+        return target === shell || target === graph || target.classList.contains('graph-svg');
       }
 
       function isSelectableContent(target) {
