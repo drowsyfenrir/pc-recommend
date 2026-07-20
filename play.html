@@ -53,30 +53,6 @@
       padding: 30px;
     }
 
-    .play-tabs {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      margin-bottom: 26px;
-    }
-
-    .play-tab {
-      min-width: 120px;
-      border: 0;
-      border-radius: 999px;
-      padding: 11px 18px;
-      color: #fff;
-      background: var(--navy);
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .play-tab.is-active {
-      background: var(--orange);
-    }
-
     .saju-step {
       display: grid;
       gap: 22px;
@@ -142,34 +118,12 @@
       background: var(--navy);
     }
 
-    .saju-loading {
-      display: grid;
-      place-items: center;
-      width: 170px;
-      height: 170px;
-      border-radius: 50%;
-      color: var(--orange);
-      background:
-        radial-gradient(circle at center, #fff 48%, transparent 50%),
-        conic-gradient(from 0deg, var(--orange), #ffd166, var(--navy), var(--orange));
-      animation: spin 1.1s linear infinite;
-    }
-
-    .saju-loading::after {
-      content: "";
-      width: 92px;
-      height: 92px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: inset 0 0 0 2px rgba(6, 22, 51, .08);
-    }
-
-    .saju-loading-text {
-      margin: 0;
-      color: var(--muted);
-      font-size: 17px;
-      font-weight: 700;
-      text-align: center;
+    .saju-loading-video {
+      width: min(520px, 100%);
+      border-radius: 15px;
+      background: #f5f7fb;
+      box-shadow: 0 10px 24px rgba(6, 22, 51, .14);
+      object-fit: cover;
     }
 
     .saju-result-list {
@@ -244,12 +198,6 @@
       transform: translate(-50%, 0);
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
     @media (max-width: 640px) {
       body {
         padding: 14px;
@@ -282,32 +230,27 @@
 </head>
 <body>
   <main class="play-panel" aria-label="플레이 영역">
-    <nav class="play-tabs" aria-label="플레이 보기">
-      <button class="play-tab is-active" type="button" aria-current="page">사주</button>
-    </nav>
-
     <section class="saju-step is-active" data-saju-step="form" aria-label="사주 입력">
-      <h1 class="saju-title">PC 선택안 사주 보기</h1>
+      <h1 class="saju-title">똥꼬의 미래 사주 보기!</h1>
       <form id="sajuForm" class="saju-form">
         <label class="saju-field">
           <span>이름</span>
           <input id="sajuName" type="text" placeholder="이름을 입력하세요" autocomplete="name" />
         </label>
         <label class="saju-field">
-          <span>좋아하는 감각</span>
-          <input id="sajuInsight" type="text" placeholder="예: 속도, 안정감, 조용함" />
+          <span>아직도 엘냐를 믿나요?</span>
+          <input id="sajuInsight" type="text" placeholder="y/n" />
         </label>
         <label class="saju-field">
-          <span>원하는 역할</span>
-          <input id="sajuAffiliation" type="text" placeholder="예: 게임, 작업, 송출" />
+          <span>로또 번호를 적어주세요.</span>
+          <input id="sajuAffiliation" type="text" placeholder="이거 빼고 사셈" />
         </label>
         <button class="saju-primary-button" type="submit">사주 보기</button>
       </form>
     </section>
 
     <section class="saju-step" data-saju-step="loading" aria-label="사주 계산 중" hidden>
-      <div class="saju-loading" aria-hidden="true"></div>
-      <p class="saju-loading-text">미래의 인연을 불러오는 중...</p>
+      <video id="sajuLoadingVideo" class="saju-loading-video" src="playingimage/Loading.mp4" muted playsinline preload="auto"></video>
     </section>
 
     <section class="saju-step" data-saju-step="result" aria-label="사주 결과" hidden>
@@ -329,6 +272,7 @@
     const sajuResultList = document.getElementById("sajuResultList");
     const sajuRetryButton = document.getElementById("sajuRetryButton");
     const sajuCopyButton = document.getElementById("sajuCopyButton");
+    const sajuLoadingVideo = document.getElementById("sajuLoadingVideo");
     const copyToast = document.getElementById("copyToast");
     const sajuResultLabels = [
       "미래 연인",
@@ -367,12 +311,15 @@
 
       sajuState.name = sajuNameInput.value.trim();
       setSajuStep("loading");
+      sajuLoadingVideo.currentTime = 0;
       window.clearTimeout(sajuState.timer);
-      sajuState.timer = window.setTimeout(showSajuResult, 900);
+      sajuState.timer = window.setTimeout(showSajuResult, 4000);
+      sajuLoadingVideo.play().catch(() => {});
     }
 
     async function showSajuResult() {
       window.clearTimeout(sajuState.timer);
+      sajuLoadingVideo.pause();
       const results = await pickSajuResults();
       sajuState.results = results;
       sajuResultTitle.textContent = `${sajuState.name}의 미래`;
@@ -388,6 +335,8 @@
 
     function resetSajuReading() {
       window.clearTimeout(sajuState.timer);
+      sajuLoadingVideo.pause();
+      sajuLoadingVideo.currentTime = 0;
       sajuState.results = [];
       setSajuStep("form");
     }
