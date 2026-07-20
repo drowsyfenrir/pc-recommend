@@ -8,6 +8,9 @@
   <style>
     :root {
       --grid-line: #edf0f3;
+      --orange: #ff6b00;
+      --navy: #061633;
+      --muted: #667085;
     }
 
     * {
@@ -29,23 +32,458 @@
         linear-gradient(var(--grid-line) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
       background-size: 12px 12px;
-      color: #061633;
-      font-family: Arial, sans-serif;
+      color: var(--navy);
+      font-family: Arial, "Malgun Gothic", sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
     }
 
     .play-panel {
       width: min(800px, 100%);
-      min-height: 420px;
+      min-height: 520px;
       border: 0;
       border-radius: 15px;
       background: #ffffff;
       box-shadow:
         0 0 34px rgba(6, 22, 51, .18),
         0 18px 60px rgba(6, 22, 51, .12);
+      padding: 30px;
+    }
+
+    .play-tabs {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    .play-tab {
+      min-width: 120px;
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 18px;
+      color: #fff;
+      background: var(--navy);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .play-tab.is-active {
+      background: var(--orange);
+    }
+
+    .saju-step {
+      display: grid;
+      gap: 22px;
+      justify-items: center;
+    }
+
+    .saju-step[hidden] {
+      display: none;
+    }
+
+    .saju-title {
+      margin: 0;
+      color: var(--navy);
+      font-size: 34px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .saju-form {
+      display: grid;
+      gap: 14px;
+      width: min(460px, 100%);
+    }
+
+    .saju-field {
+      display: grid;
+      gap: 7px;
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .saju-field input {
+      width: 100%;
+      min-height: 48px;
+      border: 2px solid #d8dee8;
+      border-radius: 9px;
+      padding: 10px 13px;
+      color: var(--navy);
+      background: #fff;
+      outline: none;
+    }
+
+    .saju-field input:focus {
+      border-color: var(--orange);
+    }
+
+    .saju-primary-button,
+    .saju-secondary-button {
+      min-height: 50px;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 26px;
+      color: #fff;
+      background: var(--orange);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .saju-secondary-button {
+      background: var(--navy);
+    }
+
+    .saju-loading {
+      display: grid;
+      place-items: center;
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      color: var(--orange);
+      background:
+        radial-gradient(circle at center, #fff 48%, transparent 50%),
+        conic-gradient(from 0deg, var(--orange), #ffd166, var(--navy), var(--orange));
+      animation: spin 1.1s linear infinite;
+    }
+
+    .saju-loading::after {
+      content: "";
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: inset 0 0 0 2px rgba(6, 22, 51, .08);
+    }
+
+    .saju-loading-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .saju-result-list {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .saju-result-card {
+      display: grid;
+      grid-template-columns: minmax(140px, .7fr) 92px minmax(0, 1fr);
+      align-items: center;
+      gap: 16px;
+      min-height: 116px;
+      padding: 12px 18px;
+      border: 1px solid #d8dee8;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .saju-result-label {
+      color: var(--navy);
+      font-size: 17px;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .saju-partner-image {
+      width: 86px;
+      height: 86px;
+      border: 1px solid #d8dee8;
+      border-radius: 12px;
+      object-fit: cover;
+      background: #f5f7fb;
+    }
+
+    .saju-partner-name {
+      color: var(--navy);
+      font-size: 23px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .saju-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .copy-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 34px;
+      z-index: 50;
+      transform: translate(-50%, 10px);
+      padding: 14px 24px;
+      color: #fff;
+      background: rgba(6, 22, 51, .92);
+      border-radius: 999px;
+      box-shadow: 0 10px 24px rgba(6, 22, 51, .22);
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease, transform .16s ease;
+    }
+
+    .copy-toast.is-visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .play-panel {
+        padding: 22px 16px;
+      }
+
+      .saju-title {
+        font-size: 26px;
+      }
+
+      .saju-result-card {
+        grid-template-columns: 78px minmax(0, 1fr);
+        gap: 12px;
+      }
+
+      .saju-result-label {
+        grid-column: 1 / -1;
+        text-align: left;
+      }
+
+      .saju-partner-image {
+        width: 78px;
+        height: 78px;
+      }
     }
   </style>
 </head>
 <body>
-  <main class="play-panel" aria-label="플레이 영역"></main>
+  <main class="play-panel" aria-label="플레이 영역">
+    <nav class="play-tabs" aria-label="플레이 보기">
+      <button class="play-tab is-active" type="button" aria-current="page">사주</button>
+    </nav>
+
+    <section class="saju-step is-active" data-saju-step="form" aria-label="사주 입력">
+      <h1 class="saju-title">PC 선택안 사주 보기</h1>
+      <form id="sajuForm" class="saju-form">
+        <label class="saju-field">
+          <span>이름</span>
+          <input id="sajuName" type="text" placeholder="이름을 입력하세요" autocomplete="name" />
+        </label>
+        <label class="saju-field">
+          <span>좋아하는 감각</span>
+          <input id="sajuInsight" type="text" placeholder="예: 속도, 안정감, 조용함" />
+        </label>
+        <label class="saju-field">
+          <span>원하는 역할</span>
+          <input id="sajuAffiliation" type="text" placeholder="예: 게임, 작업, 송출" />
+        </label>
+        <button class="saju-primary-button" type="submit">사주 보기</button>
+      </form>
+    </section>
+
+    <section class="saju-step" data-saju-step="loading" aria-label="사주 계산 중" hidden>
+      <div class="saju-loading" aria-hidden="true"></div>
+      <p class="saju-loading-text">미래의 인연을 불러오는 중...</p>
+    </section>
+
+    <section class="saju-step" data-saju-step="result" aria-label="사주 결과" hidden>
+      <h1 id="sajuResultTitle" class="saju-title">미래 결과</h1>
+      <div id="sajuResultList" class="saju-result-list"></div>
+      <div class="saju-actions">
+        <button id="sajuCopyButton" class="saju-secondary-button" type="button">결과 복사</button>
+        <button id="sajuRetryButton" class="saju-primary-button" type="button">다시 하기</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="copyToast" class="copy-toast" role="status" aria-live="polite" hidden>복사 완료</div>
+
+  <script>
+    const sajuForm = document.getElementById("sajuForm");
+    const sajuNameInput = document.getElementById("sajuName");
+    const sajuResultTitle = document.getElementById("sajuResultTitle");
+    const sajuResultList = document.getElementById("sajuResultList");
+    const sajuRetryButton = document.getElementById("sajuRetryButton");
+    const sajuCopyButton = document.getElementById("sajuCopyButton");
+    const copyToast = document.getElementById("copyToast");
+    const sajuResultLabels = [
+      "미래 연인",
+      "미래 배우자",
+      "운명의 라이벌",
+      "인생 멘토",
+      "인생 동료",
+      "롤모델",
+      "반면교사",
+      "사업 파트너",
+      "상사",
+      "부하"
+    ];
+    const fallbackPartners = [
+      { name: "AI 비서", image: "playingimage/AI 비서.png" },
+      { name: "해커", image: "playingimage/해커.png" },
+      { name: "현자", image: "playingimage/현자.png" }
+    ];
+    const sajuState = {
+      name: "",
+      results: [],
+      timer: null
+    };
+
+    sajuForm.addEventListener("submit", startSajuReading);
+    sajuRetryButton.addEventListener("click", resetSajuReading);
+    sajuCopyButton.addEventListener("click", copySajuResult);
+
+    function startSajuReading(event) {
+      event.preventDefault();
+      const fields = Array.from(sajuForm.querySelectorAll("input"));
+      if (fields.some((field) => !field.value.trim())) {
+        showCopyToast("빈 칸을 채워주세요");
+        return;
+      }
+
+      sajuState.name = sajuNameInput.value.trim();
+      setSajuStep("loading");
+      window.clearTimeout(sajuState.timer);
+      sajuState.timer = window.setTimeout(showSajuResult, 900);
+    }
+
+    async function showSajuResult() {
+      window.clearTimeout(sajuState.timer);
+      const results = await pickSajuResults();
+      sajuState.results = results;
+      sajuResultTitle.textContent = `${sajuState.name}의 미래`;
+      sajuResultList.innerHTML = results.map((result) => `
+        <div class="saju-result-card">
+          <span class="saju-result-label">${escapeHtml(result.label)} :</span>
+          <img class="saju-partner-image" src="${escapeAttr(result.person.image)}" alt="${escapeAttr(result.person.name)}" />
+          <strong class="saju-partner-name">${escapeHtml(result.person.name)}</strong>
+        </div>
+      `).join("");
+      setSajuStep("result");
+    }
+
+    function resetSajuReading() {
+      window.clearTimeout(sajuState.timer);
+      sajuState.results = [];
+      setSajuStep("form");
+    }
+
+    function setSajuStep(step) {
+      document.querySelectorAll("[data-saju-step]").forEach((panel) => {
+        const active = panel.dataset.sajuStep === step;
+        panel.hidden = !active;
+        panel.classList.toggle("is-active", active);
+      });
+    }
+
+    async function pickSajuResults() {
+      const partners = await loadSajuPartners();
+      const shuffled = shuffle(partners);
+      return sajuResultLabels.map((label, index) => ({
+        label,
+        person: shuffled[index % shuffled.length]
+      }));
+    }
+
+    async function loadSajuPartners() {
+      try {
+        const response = await fetch(`playingimage/images.json?v=${Date.now()}`, { cache: "no-store" });
+        const data = await response.json();
+        const unique = new Map();
+        (Array.isArray(data) ? data : []).forEach((item) => {
+          const image = String(item.image || "");
+          const name = String(item.name || "").trim() || fileNameFromPath(image);
+          if (!name || !image.startsWith("playingimage/")) return;
+          unique.set(image, { name, image });
+        });
+        if (unique.size) return Array.from(unique.values());
+      } catch (error) {
+        console.warn(error);
+      }
+      return fallbackPartners;
+    }
+
+    function shuffle(items) {
+      const array = items.slice();
+      for (let index = array.length - 1; index > 0; index -= 1) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [array[index], array[swapIndex]] = [array[swapIndex], array[index]];
+      }
+      return array;
+    }
+
+    async function copySajuResult() {
+      if (!sajuState.results.length) return;
+      const text = [
+        sajuResultTitle.textContent,
+        ...sajuState.results.map((result) => `${result.label}: ${result.person.name}`)
+      ].join("\n");
+      await copyText(text);
+      showCopyToast("복사 완료");
+    }
+
+    async function copyText(text) {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.append(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      textarea.remove();
+    }
+
+    function showCopyToast(message) {
+      copyToast.textContent = message;
+      copyToast.hidden = false;
+      copyToast.classList.add("is-visible");
+      clearTimeout(showCopyToast.timer);
+      showCopyToast.timer = setTimeout(() => {
+        copyToast.classList.remove("is-visible");
+        copyToast.hidden = true;
+      }, 1400);
+    }
+
+    function fileNameFromPath(path) {
+      return decodeURIComponent(String(path).split("/").pop()?.replace(/\.[^.]+$/, "") || "");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[char]));
+    }
+
+    function escapeAttr(value) {
+      return String(value ?? "").replace(/["'\\]/g, "");
+    }
+  </script>
 </body>
 </html>

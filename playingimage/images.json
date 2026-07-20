@@ -1,0 +1,338 @@
+﻿[
+    {
+        "name":  "AI 비서",
+        "image":  "playingimage/AI 비서.png"
+    },
+    {
+        "name":  "가구 디자이너",
+        "image":  "playingimage/가구 디자이너.png"
+    },
+    {
+        "name":  "감정사",
+        "image":  "playingimage/감정사.png"
+    },
+    {
+        "name":  "건물주",
+        "image":  "playingimage/건물주.png"
+    },
+    {
+        "name":  "검투사",
+        "image":  "playingimage/검투사.png"
+    },
+    {
+        "name":  "고고학자",
+        "image":  "playingimage/고고학자.png"
+    },
+    {
+        "name":  "골동품",
+        "image":  "playingimage/골동품.png"
+    },
+    {
+        "name":  "관장",
+        "image":  "playingimage/관장.png"
+    },
+    {
+        "name":  "교사",
+        "image":  "playingimage/교사.png"
+    },
+    {
+        "name":  "구미호",
+        "image":  "playingimage/구미호.png"
+    },
+    {
+        "name":  "기상캐스터",
+        "image":  "playingimage/기상캐스터.png"
+    },
+    {
+        "name":  "기장",
+        "image":  "playingimage/기장.png"
+    },
+    {
+        "name":  "길고양이",
+        "image":  "playingimage/길고양이.png"
+    },
+    {
+        "name":  "나무꾼",
+        "image":  "playingimage/나무꾼.png"
+    },
+    {
+        "name":  "네비게이션",
+        "image":  "playingimage/네비게이션.png"
+    },
+    {
+        "name":  "늑대 인간",
+        "image":  "playingimage/늑대 인간.png"
+    },
+    {
+        "name":  "다이버",
+        "image":  "playingimage/다이버.png"
+    },
+    {
+        "name":  "대학원생",
+        "image":  "playingimage/대학원생.png"
+    },
+    {
+        "name":  "도꺠비",
+        "image":  "playingimage/도꺠비.png"
+    },
+    {
+        "name":  "도둑",
+        "image":  "playingimage/도둑.png"
+    },
+    {
+        "name":  "도어락",
+        "image":  "playingimage/도어락.png"
+    },
+    {
+        "name":  "도예가",
+        "image":  "playingimage/도예가.png"
+    },
+    {
+        "name":  "드라이버",
+        "image":  "playingimage/드라이버.png"
+    },
+    {
+        "name":  "딜러",
+        "image":  "playingimage/딜러.png"
+    },
+    {
+        "name":  "마네킹",
+        "image":  "playingimage/마네킹.png"
+    },
+    {
+        "name":  "마법사",
+        "image":  "playingimage/마법사.png"
+    },
+    {
+        "name":  "마술사",
+        "image":  "playingimage/마술사.png"
+    },
+    {
+        "name":  "마왕",
+        "image":  "playingimage/마왕.png"
+    },
+    {
+        "name":  "바텐더",
+        "image":  "playingimage/바텐더.png"
+    },
+    {
+        "name":  "뱀파이어",
+        "image":  "playingimage/뱀파이어.png"
+    },
+    {
+        "name":  "벌새",
+        "image":  "playingimage/벌새.png"
+    },
+    {
+        "name":  "비밀 요원",
+        "image":  "playingimage/비밀 요원.png"
+    },
+    {
+        "name":  "사냥꾼",
+        "image":  "playingimage/사냥꾼.png"
+    },
+    {
+        "name":  "사서",
+        "image":  "playingimage/사서.png"
+    },
+    {
+        "name":  "사이보그",
+        "image":  "playingimage/사이보그.png"
+    },
+    {
+        "name":  "사이비교주",
+        "image":  "playingimage/사이비교주.png"
+    },
+    {
+        "name":  "셰프",
+        "image":  "playingimage/셰프.png"
+    },
+    {
+        "name":  "소꿉친구",
+        "image":  "playingimage/소꿉친구.png"
+    },
+    {
+        "name":  "숲의 요정",
+        "image":  "playingimage/숲의 요정.png"
+    },
+    {
+        "name":  "스님",
+        "image":  "playingimage/스님.png"
+    },
+    {
+        "name":  "스트리머",
+        "image":  "playingimage/스트리머.png"
+    },
+    {
+        "name":  "스피커",
+        "image":  "playingimage/스피커.png"
+    },
+    {
+        "name":  "시간 여행자",
+        "image":  "playingimage/시간 여행자.png"
+    },
+    {
+        "name":  "아이돌",
+        "image":  "playingimage/아이돌.png"
+    },
+    {
+        "name":  "악마",
+        "image":  "playingimage/악마.png"
+    },
+    {
+        "name":  "안드로이드",
+        "image":  "playingimage/안드로이드.png"
+    },
+    {
+        "name":  "옆집 이웃",
+        "image":  "playingimage/옆집 이웃.png"
+    },
+    {
+        "name":  "예언가",
+        "image":  "playingimage/예언가.png"
+    },
+    {
+        "name":  "외계 왕자",
+        "image":  "playingimage/외계 왕자.png"
+    },
+    {
+        "name":  "요정",
+        "image":  "playingimage/요정.png"
+    },
+    {
+        "name":  "용사",
+        "image":  "playingimage/용사.png"
+    },
+    {
+        "name":  "우주비행사",
+        "image":  "playingimage/우주비행사.png"
+    },
+    {
+        "name":  "유령",
+        "image":  "playingimage/유령.png"
+    },
+    {
+        "name":  "유튜버",
+        "image":  "playingimage/유튜버.png"
+    },
+    {
+        "name":  "은둔고수",
+        "image":  "playingimage/은둔고수.png"
+    },
+    {
+        "name":  "음유시인",
+        "image":  "playingimage/음유시인.png"
+    },
+    {
+        "name":  "인공위성",
+        "image":  "playingimage/인공위성.png"
+    },
+    {
+        "name":  "인어",
+        "image":  "playingimage/인어.png"
+    },
+    {
+        "name":  "재벌 회장",
+        "image":  "playingimage/재벌 회장.png"
+    },
+    {
+        "name":  "저승사자",
+        "image":  "playingimage/저승사자.png"
+    },
+    {
+        "name":  "저주받은 인형",
+        "image":  "playingimage/저주받은 인형.png"
+    },
+    {
+        "name":  "조향사",
+        "image":  "playingimage/조향사.png"
+    },
+    {
+        "name":  "좀비",
+        "image":  "playingimage/좀비.png"
+    },
+    {
+        "name":  "집사",
+        "image":  "playingimage/집사.png"
+    },
+    {
+        "name":  "천문학자",
+        "image":  "playingimage/천문학자.png"
+    },
+    {
+        "name":  "천사",
+        "image":  "playingimage/천사.png"
+    },
+    {
+        "name":  "카페 사장",
+        "image":  "playingimage/카페 사장.png"
+    },
+    {
+        "name":  "클론",
+        "image":  "playingimage/클론.png"
+    },
+    {
+        "name":  "키오스크",
+        "image":  "playingimage/키오스크.png"
+    },
+    {
+        "name":  "타로 마스터",
+        "image":  "playingimage/타로 마스터.png"
+    },
+    {
+        "name":  "탐정",
+        "image":  "playingimage/탐정.png"
+    },
+    {
+        "name":  "택배 기사",
+        "image":  "playingimage/택배 기사.png"
+    },
+    {
+        "name":  "토마토",
+        "image":  "playingimage/토마토.png"
+    },
+    {
+        "name":  "특수분장사",
+        "image":  "playingimage/특수분장사.png"
+    },
+    {
+        "name":  "파라오",
+        "image":  "playingimage/파라오.png"
+    },
+    {
+        "name":  "파파라치",
+        "image":  "playingimage/파파라치.png"
+    },
+    {
+        "name":  "펭귄",
+        "image":  "playingimage/펭귄.png"
+    },
+    {
+        "name":  "해적",
+        "image":  "playingimage/해적.png"
+    },
+    {
+        "name":  "해커",
+        "image":  "playingimage/해커.png"
+    },
+    {
+        "name":  "현상금 사냥꾼",
+        "image":  "playingimage/현상금 사냥꾼.png"
+    },
+    {
+        "name":  "현자",
+        "image":  "playingimage/현자.png"
+    },
+    {
+        "name":  "호랑이",
+        "image":  "playingimage/호랑이.png"
+    },
+    {
+        "name":  "호위 무사",
+        "image":  "playingimage/호위 무사.png"
+    },
+    {
+        "name":  "흑마법사",
+        "image":  "playingimage/흑마법사.png"
+    }
+]
