@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>pc 부품 선택안</title>
+  <style>
+    :root {
+      --grid-line: #edf0f3;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background-color: #fff;
+      background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+      background-size: 12px 12px;
+      color: #061633;
+      font-family: Arial, sans-serif;
+    }
+
+    .play-panel {
+      width: min(800px, 100%);
+      min-height: 420px;
+      border: 0;
+      border-radius: 15px;
+      background: #ffffff;
+      box-shadow:
+        0 0 34px rgba(6, 22, 51, .18),
+        0 18px 60px rgba(6, 22, 51, .12);
+    }
+  </style>
+</head>
+<body>
+  <main class="play-panel" aria-label="플레이 영역"></main>
+</body>
+</html>
