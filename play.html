@@ -262,7 +262,7 @@
       <h1 id="sajuResultTitle" class="saju-title">미래 결과</h1>
       <div id="sajuResultList" class="saju-result-list"></div>
       <div class="saju-actions">
-        <button id="sajuCopyButton" class="saju-secondary-button" type="button">결과 복사</button>
+        <button id="sajuCopyButton" class="saju-secondary-button" type="button">이미지 복사</button>
         <button id="sajuRetryButton" class="saju-primary-button" type="button">다시 하기</button>
       </div>
     </section>
@@ -402,28 +402,141 @@
 
     async function copySajuResult() {
       if (!sajuState.results.length) return;
-      const text = [
-        sajuResultTitle.textContent,
-        ...sajuState.results.map((result) => `${result.label}: ${result.person.name}`)
-      ].join("\n");
-      await copyText(text);
-      showCopyToast("복사 완료");
+      sajuCopyButton.disabled = true;
+      try {
+        const blob = await createSajuResultImage();
+        await copyImageBlob(blob);
+        showCopyToast("이미지 복사 완료");
+      } catch (error) {
+        try {
+          const blob = await createSajuResultImage();
+          downloadBlob(blob, "saju-result.png");
+          showCopyToast("이미지 다운로드 완료");
+        } catch (downloadError) {
+          showCopyToast("이미지 복사를 지원하지 않습니다");
+        }
+      } finally {
+        sajuCopyButton.disabled = false;
+      }
     }
 
-    async function copyText(text) {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(text);
-        return;
+    async function createSajuResultImage() {
+      if (document.fonts?.ready) await document.fonts.ready;
+      const scale = 2;
+      const width = 980;
+      const rowHeight = 118;
+      const topPadding = 92;
+      const bottomPadding = 46;
+      const height = topPadding + sajuState.results.length * rowHeight + bottomPadding;
+      const canvas = document.createElement("canvas");
+      canvas.width = width * scale;
+      canvas.height = height * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(scale, scale);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = "#061633";
+      ctx.font = '800 36px Arial, "Malgun Gothic", sans-serif';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(sajuResultTitle.textContent, width / 2, 44);
+
+      for (const [index, result] of sajuState.results.entries()) {
+        const y = topPadding + index * rowHeight;
+        drawRoundRect(ctx, 42, y + 8, width - 84, rowHeight - 16, 14, "#ffffff", "#d8dee8");
+
+        ctx.fillStyle = "#061633";
+        ctx.font = '800 20px Arial, "Malgun Gothic", sans-serif';
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(`${result.label} :`, 284, y + rowHeight / 2);
+
+        await drawImageBox(ctx, result.person.image, 318, y + 16, 86, 86);
+
+        ctx.fillStyle = "#061633";
+        ctx.font = '800 25px Arial, "Malgun Gothic", sans-serif';
+        ctx.textAlign = "left";
+        drawFittedText(ctx, result.person.name, 430, y + rowHeight / 2, width - 472, 25);
       }
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.setAttribute("readonly", "");
-      textarea.style.position = "fixed";
-      textarea.style.left = "-9999px";
-      document.body.append(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("이미지를 생성하지 못했습니다"));
+        }, "image/png");
+      });
+    }
+
+    function drawRoundRect(ctx, x, y, w, h, r, fill, stroke) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    async function drawImageBox(ctx, src, x, y, w, h) {
+      ctx.save();
+      drawRoundRect(ctx, x, y, w, h, 12, "#f5f7fb", null);
+      ctx.clip();
+      const image = await loadImage(src).catch(() => null);
+      if (image) {
+        const ratio = Math.max(w / image.naturalWidth, h / image.naturalHeight);
+        const drawW = image.naturalWidth * ratio;
+        const drawH = image.naturalHeight * ratio;
+        ctx.drawImage(image, x + (w - drawW) / 2, y + (h - drawH) / 2, drawW, drawH);
+      }
+      ctx.restore();
+      drawRoundRect(ctx, x, y, w, h, 12, null, "#d8dee8");
+    }
+
+    function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = src;
+      });
+    }
+
+    function drawFittedText(ctx, text, x, y, maxWidth, fontSize) {
+      let size = fontSize;
+      while (size > 14 && ctx.measureText(text).width > maxWidth) {
+        size -= 1;
+        ctx.font = `800 ${size}px Arial, "Malgun Gothic", sans-serif`;
+      }
+      ctx.fillText(text, x, y);
+    }
+
+    async function copyImageBlob(blob) {
+      if (!navigator.clipboard || !window.ClipboardItem) throw new Error("이미지 클립보드를 지원하지 않습니다");
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+    }
+
+    function downloadBlob(blob, filename) {
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
     }
 
     function showCopyToast(message) {
